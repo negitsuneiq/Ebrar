@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import resources from '../src/search/catalog';
+import added from '../src/search/catalog-tr';
+import { universities } from '../src/search/universities';
+import { normalize, scoreResource, isTrustedResource } from '../src/search/search';
+import checks from '../catalog-research/tr-document-checks.json';
+assert.equal(resources.length,1805);
+assert.equal(added.length,314);
+assert.equal(universities.length,18);
+assert.equal(new Set(resources.map(r=>r.id)).size,resources.length);
+assert.equal(new Set(added.map(r=>r.url)).size,added.length);
+assert.ok(resources.every(isTrustedResource));
+assert.ok(universities.every(u=>resources.some(r=>r.university===u.id)));
+for(const r of added){
+ assert.ok(checks.some(c=>c.id===r.id&&c.ok&&c.url===r.url),'Missing PDF signature check: '+r.title);
+ assert.ok(r.language==='tr'||r.language==='en');
+ assert.ok(!/syllabus|sonuçları|results|devamsızlık|courseinfo/i.test(r.title));
+ assert.ok(r.sourceUrl&&r.author&&r.tags);
+ if(r.university==='ankara'||r.university==='metu')assert.match(r.sourceLicense||'',/CC BY-NC-SA/);
+}
+assert.equal(normalize('İzmir Yıldız Boğaziçi'), 'izmir yildiz bogazici');
+const find=(q:string)=>resources.filter(r=>scoreResource(r,q)>0);
+assert.ok(find('bogazici').some(r=>r.university==='bogazici'));
+assert.ok(find('İzmir').some(r=>r.university==='iyte'));
+assert.ok(find('ODTU').some(r=>r.university==='metu'));
+assert.ok(find('metric spaces').some(r=>r.university==='ankara'&&r.language==='tr'));
+assert.ok(find('linear algebra').some(r=>r.university==='bilkent'));
+assert.ok(find('Morse').some(r=>r.language==='tr'));
+assert.ok(find('pde').some(r=>r.university==='mit'));
+assert.equal(find('zzzxxyqnomaterial').length,0);
+console.log('PASS: catalogue integrity, all new signatures, language and access exclusions, broad subjects and English/Turkish search.');

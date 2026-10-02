@@ -1,0 +1,25 @@
+{
+  "name": "Matris geliştirme",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/shyim/devcontainers-features/bun:0": {
+      "version": "1.4.2"
+    }
+  },
+  "workspaceFolder": "/workspaces/Ebrar",
+  "postCreateCommand": "cd matris-matematik && bun install --frozen-lockfile",
+  "forwardPorts": [
+    5173,
+    4173
+  ],
+  "portsAttributes": {
+    "5173": {
+      "label": "Matris geliştirme",
+      "onAutoForward": "notify"
+    },
+    "4173": {
+      "label": "Matris önizleme",
+      "onAutoForward": "notify"
+    }
+  }
+}

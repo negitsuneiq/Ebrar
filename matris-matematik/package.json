@@ -1,0 +1,41 @@
+{
+  "name": "matris-matematik",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "node scripts/preview-local.mjs",
+    "test:catalog": "bun scripts/test-catalog.ts",
+    "test:ui": "node scripts/test-search-ui.mjs",
+    "test:scroll": "node scripts/test-scroll.mjs",
+    "test:a11y": "node scripts/review-dark-design.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-router": "^1.168.25",
+    "@tanstack/react-start": "^1.167.50"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^6.0.2",
+    "playwright": "1.61.1",
+    "axe-core": "4.11.0"
+  },
+  "overrides": {
+    "@types/react": "19.2.15"
+  },
+  "packageManager": "bun@1.4.2"
+}

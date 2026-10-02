@@ -1,0 +1,38 @@
+name: Matris checks
+on:
+  push:
+    paths: ["matris-matematik/**", ".github/workflows/matris.yml"]
+  pull_request:
+    paths: ["matris-matematik/**", ".github/workflows/matris.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: matris-matematik
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.2"
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run test:catalog
+      - run: bunx playwright install --with-deps chromium
+      - name: Start production preview
+        run: |
+          bun run preview > /tmp/matris-preview.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+      - run: bun run test:ui
+      - run: bun run test:scroll
+      - run: bun run test:a11y
